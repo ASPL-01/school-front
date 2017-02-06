@@ -1,0 +1,10 @@
+.box .selected{
+  background-color: #e74c3c;
+  color: white;
+  padding: 5px;
+}
+
+.box .empty{
+  background-color: white;
+  padding: 5px;
+}

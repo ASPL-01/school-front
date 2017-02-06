@@ -30,7 +30,7 @@ export default class CreateKlass extends React.Component{
   render(){
     return (
       <div className="create-klass">
-        <h1>Create Student</h1>
+        <h1>Create Klass</h1>
         <div className="error">{this.state.error}</div>
         <form>
           <label>Name</label>

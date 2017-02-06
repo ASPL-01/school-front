@@ -1,5 +1,6 @@
 import React from 'react';
 import Box from '../Box/Box';
+import './List.css';
 
 export default (props) => {
   const items = props.items || [];
