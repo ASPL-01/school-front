@@ -16,11 +16,13 @@ export default class CreateStudent extends React.Component{
     return (
       <div className="create-student">
         <h3>Create Student</h3>
-        <div>{this.state.error}</div>
+        <div className={this.state.error ? "error" : ""}>{this.state.error}</div>
         <form>
-          <label>Email Address</label>
-          <input ref={n => this.email = n} type="email" />
-          <button onClick={this.create}>Create</button>
+          <div className="form-group">
+            <label>Email Address</label>
+            <input placeholder="student@allstate.com" className="form-control" ref={n => this.email = n} type="email" />
+          </div>
+          <button className="btn btn-danger btn-small" onClick={this.create}>Create</button>
         </form>
       </div>
     );
