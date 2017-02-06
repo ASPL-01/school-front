@@ -14,4 +14,7 @@ class App extends Component {
   }
 }
 
+{/*<Box text="sara@gmail.com" id="3" css="selected" click={fn1}  >
+<Box text="chemistry" id="5" css="empty" click={fn2}  >*/}
+
 export default App;
