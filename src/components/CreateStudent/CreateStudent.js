@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import './CreateStudent.css';
 
 export default class CreateStudent extends React.Component{
@@ -8,8 +9,25 @@ export default class CreateStudent extends React.Component{
     this.create = this.create.bind(this);
   }
 
-  create(){
-    console.log('***CREATE CLICKED***');
+  create(e){
+    e.preventDefault();
+    const email = this.email.value;
+    if(email.length < 7){
+      this.setState({error: 'Email too short'})
+      return;
+    }
+
+    const payload = {email};
+    const url = this.props.host + '/students';
+    axios.post(url, payload)
+    .then(r => {
+      const student = r.data;
+      this.props.created(student);
+      this.email.value = '';
+      this.setState({error: ''});
+    }).catch(e => {
+      this.setState({error: e.message});
+    });
   }
 
   render(){
