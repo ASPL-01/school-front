@@ -1,4 +1,5 @@
 import React from 'react';
+import './Sum.css';
 
 export default class Sum extends React.Component{
   constructor(props){
