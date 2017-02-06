@@ -6,10 +6,10 @@
   color: yellow;
 }
 
-.sum input{
+.sum > input{
   background-color: red;
 }
 
-.sum button{
+.sum > button{
   background-color: green;
 }
