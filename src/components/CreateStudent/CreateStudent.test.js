@@ -2,11 +2,21 @@ import React from 'react';
 import {shallow, mount, render} from 'enzyme';
 import {expect} from 'chai';
 import sinon from 'sinon';
+import nock from 'nock';
+import axios from 'axios';
+import httpAdapter from 'axios/lib/adapters/http';
 
 import CreateStudent from './CreateStudent';
+axios.defaults.adapter = httpAdapter;
 
 describe('List', () => {
   beforeEach(() => {
+    nock.disableNetConnect();
+  });
+
+  afterEach(() => {
+    nock.cleanAll();
+    nock.enableNetConnect();
   });
 
   it('should render without error', () => {
@@ -19,25 +29,47 @@ describe('List', () => {
     expect(wrapper.find(".create-student").length).to.equal(1);
   });
 
-  // it('should get the header from component', () => {
-  //   const wrapper = shallow(<List header="Students" />);
-  //   expect(wrapper.text()).to.equal('Students');
-  // });
+  it('should call preventDefault when the button is clicked', () => {
+    const stub = sinon.stub();
+    const wrapper = mount(<CreateStudent />);
+    wrapper.find('button').simulate('click', {preventDefault: stub});
+    expect(stub.callCount).to.equal(1);
+  });
 
-  // it('should render out 3 boxes', () => {
-  //   const wrapper = mount(<List header="Students" items={students} />);
-  //   expect(wrapper.find('.box').length).to.equal(3);
-  // });
+  it('should NOT show error message when email is good', () => {
+    const wrapper = mount(<CreateStudent />);
+    wrapper.find('input').get(0).value = 'bob@aol.com';
+    wrapper.find('button').simulate('click');
+    expect(wrapper.state('error')).to.be.null;
+  });
 
-  // it('should display sam in the 2nd box', () => {
-  //   const wrapper = mount(<List header="Students" items={students} />);
-  //   expect(wrapper.find(Box).at(1).find('div > div').html()).to.equal('<div data-id="4" class="empty">sam</div>');
-  // });
+  it('should show error message when email is too short', () => {
+    const wrapper = mount(<CreateStudent />);
+    wrapper.find('input').get(0).value = 'bob';
+    wrapper.find('button').simulate('click');
+    expect(wrapper.state('error')).to.equal('Email too short');
+  });
 
-  // it('should call fn when 2nd box is clicked', () => {
-  //   const stub = sinon.stub();
-  //   const wrapper = mount(<List click={stub} header="Students" items={students} />);
-  //   wrapper.find(Box).at(1).find('div > div').simulate('click');
-  //   expect(stub.callCount).to.equal(1);
-  // });
+  it.only('should create a student', (done) => {
+    nock('http://fakehost.com')
+    .post('/students', {email: 'sara@aol.com'})
+    .reply(200, {id: 99, email: 'sara@aol.com'});
+
+    const stub = sinon.stub();
+
+    const wrapper = mount(<CreateStudent host="http://fakehost.com" created={stub} />);
+    wrapper.find('input').get(0).value = 'sara@aol.com';
+    wrapper.find('button').simulate('click');
+
+    setTimeout(() => {
+      try{
+        expect(stub.callCount).to.equal(1);
+        expect(stub.getCall(0).args[0]).to.deep.equal({id: 99, email: 'sara@aol.com'});
+        expect(wrapper.find('input').get(0).value).to.equal('');
+        done();
+      }catch(e){
+        done.fail(e);
+      }
+    }, 1000);
+  });
 });
