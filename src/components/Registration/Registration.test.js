@@ -59,7 +59,7 @@ describe('Registration', () => {
     }, 1000);
   });
 
-  it.only('should highlight clicked student and klasses', (done) => {
+  it('should highlight clicked student and klasses', (done) => {
     const students = [{id:3, email:'bob'}, {id:5, email:'sara'}];
     const klasses  = [{id:7, name:'chem'}, {id:9, name:'maths'}];
     nock('http://fakehost.com')
@@ -82,6 +82,49 @@ describe('Registration', () => {
             expect(wrapper.find('.list').at(0).find('.box').at(1).find('div > div').hasClass('selected')).to.be.true;
             expect(wrapper.find('.list').at(1).find('.box').at(0).find('div > div').hasClass('selected')).to.be.true;
             done();
+          }catch(e){
+            done.fail(e);
+          }
+        }, 1000);
+      }catch(e){
+        done.fail(e);
+      }
+    }, 1000);
+  });
+
+  it.only('should register student for klass', (done) => {
+    const students = [{id:3, email:'bob'}, {id:5, email:'sara'}];
+    const klasses  = [{id:7, name:'chem'}, {id:9, name:'maths'}];
+    nock('http://fakehost.com')
+    .get('/students')
+    .reply(200, students);
+    nock('http://fakehost.com')
+    .get('/klasses')
+    .reply(200, klasses);
+    nock('http://fakehost.com')
+    .get('/students/5/klasses')
+    .reply(200, [{id:7, name:'chem'}]);
+    nock('http://fakehost.com')
+    .post('/klasses/9/add/5')
+    .reply(200);
+
+    const wrapper = mount(<Registration host="http://fakehost.com" />);
+
+    setTimeout(() => {
+      try{
+        wrapper.find('.list').at(0).find('.box').at(1).find('div > div').simulate('click');
+        setTimeout(() => {
+          try{
+            wrapper.find('.list').at(1).find('.box').at(1).find('div > div').simulate('click');
+            setTimeout(() => {
+              try{
+                expect(wrapper.find('.list').at(1).find('.box').at(0).find('div > div').hasClass('selected')).to.be.true;
+                expect(wrapper.find('.list').at(1).find('.box').at(1).find('div > div').hasClass('selected')).to.be.true;
+                done();
+              }catch(e){
+                done.fail(e);
+              }
+            }, 1000);
           }catch(e){
             done.fail(e);
           }
