@@ -25,7 +25,7 @@ export default class CreateStudent extends React.Component{
       const student = rsp.data;
       this.props.created(student);
       this.email.value = '';
-    }).catch(e => e);
+    }).catch(e => this.setState({error: e.message}));
   }
 
   render(){

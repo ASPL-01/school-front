@@ -50,7 +50,7 @@ describe('List', () => {
     expect(wrapper.state('error')).to.equal('Email too short');
   });
 
-  it.only('should create a student', (done) => {
+  it('should create a student', (done) => {
     nock('http://fakehost.com')
     .post('/students', {email: 'sara@aol.com'})
     .reply(200, {id: 99, email: 'sara@aol.com'});
@@ -66,6 +66,29 @@ describe('List', () => {
         expect(stub.callCount).to.equal(1);
         expect(stub.getCall(0).args[0]).to.deep.equal({id: 99, email: 'sara@aol.com'});
         expect(wrapper.find('input').get(0).value).to.equal('');
+        done();
+      }catch(e){
+        done.fail(e);
+      }
+    }, 1000);
+  });
+
+  it('should show server exploding error', (done) => {
+    nock('http://fakehost.com')
+    .post('/students', {email: 'sara@aol.com'})
+    .replyWithError('Server just exploded');
+
+    const stub = sinon.stub();
+
+    const wrapper = mount(<CreateStudent host="http://fakehost.com" created={stub} />);
+    wrapper.find('input').get(0).value = 'sara@aol.com';
+    wrapper.find('button').simulate('click');
+
+    setTimeout(() => {
+      try{
+        expect(stub.callCount).to.equal(0);
+        expect(wrapper.find('input').get(0).value).to.equal('sara@aol.com');
+        expect(wrapper.state('error')).to.equal('Server just exploded');
         done();
       }catch(e){
         done.fail(e);
