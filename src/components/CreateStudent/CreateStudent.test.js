@@ -9,7 +9,7 @@ import httpAdapter from 'axios/lib/adapters/http';
 import CreateStudent from './CreateStudent';
 axios.defaults.adapter = httpAdapter;
 
-describe('List', () => {
+describe('CreateStudent', () => {
   beforeEach(() => {
     nock.disableNetConnect();
   });
